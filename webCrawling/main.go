@@ -23,9 +23,9 @@ func main() {
 	fmt.Println("\nCrawling data in Normal format:")
 
 	// Print in normal format
-	// webCrawling.PrintCrawlingTimeInNormalFormat(pythonLang)
-	// webCrawling.PrintCrawlingTimeInNormalFormat(rubyLang)
-	// webCrawling.PrintCrawlingTimeInNormalFormat(goLang)
+	webCrawling.PrintCrawlingTimeInNormalFormat(pythonLang)
+	webCrawling.PrintCrawlingTimeInNormalFormat(rubyLang)
+	webCrawling.PrintCrawlingTimeInNormalFormat(goLang)
 
 	fmt.Println("\n\nCrawling data in JSON format:")
 	// Printin JSON format
