@@ -14,7 +14,7 @@ type Lang struct {
 	Name      string
 	URL       string
 	Bytes     int64
-	TimeTaken string
+	TimeTaken time.Duration
 }
 
 // PrintCrawlingTimeInNormalFormat method
@@ -38,7 +38,7 @@ func PrintCrawlingTimeInJSONFormat(lang Lang) {
 func calculateCrawlinngTime(printFunc func(Lang), lang Lang) {
 	start := time.Now()
 	data, _ := http.Get(lang.URL)
-	lang.TimeTaken = time.Since(start).String()
+	lang.TimeTaken = time.Since(start)
 	lang.Bytes, _ = io.Copy(ioutil.Discard, data.Body)
 	printFunc(lang)
 }
