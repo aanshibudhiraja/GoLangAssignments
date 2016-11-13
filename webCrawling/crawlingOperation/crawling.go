@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -18,27 +19,29 @@ type Lang struct {
 }
 
 // PrintCrawlingTimeInNormalFormat method
-func PrintCrawlingTimeInNormalFormat(lang Lang) {
+func PrintCrawlingTimeInNormalFormat(emptyLang *Lang, wg *sync.WaitGroup) {
 	calculateCrawlinngTime(func(lang Lang) {
 		fmt.Printf("\n%v", lang)
-	}, lang)
+	}, emptyLang)
+	wg.Done()
 }
 
 // PrintCrawlingTimeInJSONFormat method
-func PrintCrawlingTimeInJSONFormat(lang Lang) {
+func PrintCrawlingTimeInJSONFormat(emptyLang *Lang, wg *sync.WaitGroup) {
 	calculateCrawlinngTime(func(lang Lang) {
 		b, _ := json.Marshal(lang)
 		// Convert bytes to string.
 		s := string(b)
 		fmt.Println(s)
-	}, lang)
+	}, emptyLang)
+	wg.Done()
 }
 
 // calculateCrawlinngTime method
-func calculateCrawlinngTime(printFunc func(Lang), lang Lang) {
+func calculateCrawlinngTime(printFunc func(Lang), lang *Lang) {
 	start := time.Now()
 	data, _ := http.Get(lang.URL)
 	lang.TimeTaken = time.Since(start)
 	lang.Bytes, _ = io.Copy(ioutil.Discard, data.Body)
-	printFunc(lang)
+	printFunc(*lang)
 }
