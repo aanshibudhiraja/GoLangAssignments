@@ -2,14 +2,11 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 	webCrawling "webCrawling/crawlingOperation"
 )
 
 func main() {
-
-	var wg sync.WaitGroup
 
 	pythonLang := webCrawling.Lang{
 		Name: "Python",
@@ -26,31 +23,36 @@ func main() {
 
 	fmt.Println("\nCrawling data in Normal format:")
 
-	// Print in normal format
-	wg.Add(3)
+	ch := make(chan webCrawling.Lang)
+
 	start := time.Now()
-	go webCrawling.PrintCrawlingTimeInNormalFormat(&pythonLang, &wg)
-	go webCrawling.PrintCrawlingTimeInNormalFormat(&rubyLang, &wg)
-	go webCrawling.PrintCrawlingTimeInNormalFormat(&goLang, &wg)
 
-	wg.Wait()
+	// Print in normal forma
+	go webCrawling.PrintCrawlingTimeInNormalFormat(pythonLang, ch)
+	pythonLang = <-ch
+	go webCrawling.PrintCrawlingTimeInNormalFormat(rubyLang, ch)
+	rubyLang = <-ch
+	go webCrawling.PrintCrawlingTimeInNormalFormat(goLang, ch)
+	goLang = <-ch
 
-	totalTimeTaken := time.Since(start)
+	totalTime := time.Since(start)
 
-	fmt.Printf("\nTotal time taken : %s\nSome of time taken by all links: %f\n", totalTimeTaken, (pythonLang.TimeTaken.Seconds() + rubyLang.TimeTaken.Seconds() + goLang.TimeTaken.Seconds()))
+	fmt.Printf("\nTotal time taken : %s \nSome of time taken by all links: %fs\n", totalTime, (pythonLang.TimeTaken.Seconds() + rubyLang.TimeTaken.Seconds() + goLang.TimeTaken.Seconds()))
 
 	fmt.Println("\n\nCrawling data in JSON format:")
 	// Printin JSON format
-	wg.Add(3)
+
 	start = time.Now()
 
-	webCrawling.PrintCrawlingTimeInJSONFormat(&pythonLang, &wg)
-	webCrawling.PrintCrawlingTimeInJSONFormat(&rubyLang, &wg)
-	webCrawling.PrintCrawlingTimeInJSONFormat(&goLang, &wg)
+	go webCrawling.PrintCrawlingTimeInJSONFormat(pythonLang, ch)
+	pythonLang = <-ch
+	go webCrawling.PrintCrawlingTimeInJSONFormat(rubyLang, ch)
+	rubyLang = <-ch
+	go webCrawling.PrintCrawlingTimeInJSONFormat(goLang, ch)
+	goLang = <-ch
 
-	wg.Wait()
-	totalTimeTaken = time.Since(start)
+	totalTime = time.Since(start)
 
-	fmt.Printf("\nTotal time taken : %s\nSome of time taken by all links: %f\n", totalTimeTaken, (pythonLang.TimeTaken.Seconds() + rubyLang.TimeTaken.Seconds() + goLang.TimeTaken.Seconds()))
+	fmt.Printf("\nTotal time taken : %s\nSome of time taken by all links: %fs\n", totalTime, (pythonLang.TimeTaken.Seconds() + rubyLang.TimeTaken.Seconds() + goLang.TimeTaken.Seconds()))
 
 }
